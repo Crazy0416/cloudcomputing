@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="/jquery/lib/jquery.js"></script>
+    <script type='text/javascript' src='/jquery/lib/jquery.bgiframe.min.js'></script>
+    <script type='text/javascript' src='/jquery/lib/jquery.ajaxQueue.js'></script>
+    <script type='text/javascript' src='/jquery/jquery.autocomplete.js'></script>
+    <script src="/blockUI/jquery.blockUI.js"></script>
+    <link rel="stylesheet" type="text/css" href="/jquery/jquery.autocomplete.css" />
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+      <form action="/logout" method="get">
+        <input type="submit" value="로그아웃">
+      </form>
+    
+    <hr>
+    <script>
+        function doSomething() {
+            var url = document.forms[0].elements['name'].value;
+            console.log(url);
+            window.location =  url;
+            return false;
+        }
+        </script>
+        
+    <form onsubmit="return doSomething();">
+	    <input type="text" id="searchbox" name="search_result">
+	    <input type="submit" id="sumit" value="검색">
+    </form>
+    <script>
+      var temp = "<%=tags%>"
+      var availableTags = temp.split(',');
+      $(document).ready(function() {
+        $("#searchbox").autocomplete(availableTags, {
+          matchContains: true,
+          selectFirst: false
+        })
+      })
+    </script>
+    <form action= <%="/home/" + session.user_id%> method = "GET">
+      
+      <b>로그인 유저 : <%= session.user_id %></b>
+      <hr>
+      <% if (parent_dir) {%>
+      <% if (parent_dir != session.user_id) {%>
+        <a href=<%= "/home/" + parent_path %> <pre>..</pre> </a>
+            <pre> filetype : folder </pre>
+        <%} %>
+      </hr>
+    <%}%>
+        <% for(let folder of folders) {%>
+          <hr>
+           <a href=<%= "/home/" + folder.directory %> <pre><%= folder.foldername %></pre> </a>
+            <pre> filetype : folder </pre>
+        </hr>
+          <%} %>
+        <% for(let post of posts) {%>
+          <hr>
+         <a href=<%=post.file_url%> <td><pre><%= post.file_name %></pre> </td></a>
+          <pre> filetype : <%= post.filetype %></pre>
+          <pre> filesize : <%= post.filevolume %></pre>
+        </hr>
+        <%} %>
+    </form>
+    </hr>
+    <hr>
+    <p>
+        <form enctype="multipart/form-data" method="post" action="/upload_receiver">
+            <input type="file" name="userfile">
+            <input type="submit" name = "upload">
+        </form>
+    </p>
+    </hr>
+    <form action="/home" method="post">
+      <td><input type="text" name="Foldername"></td>
+      <input type="submit" value="폴더 추가">
+    </form>
+  </body>
+  
+</html>

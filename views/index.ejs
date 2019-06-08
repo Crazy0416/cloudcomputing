@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+      <form action="/logout" method="get">
+        <input type="submit" value="로그아웃">
+      </form>
+      <pre></pre>
+    <form action=<%="/home/" + session.user_id%> method="get">
+      <input type="submit" value="file">
+    </form>
+
+  </body>
+</html>
