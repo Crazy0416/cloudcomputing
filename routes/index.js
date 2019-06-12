@@ -8,6 +8,8 @@ var AWS = require("aws-sdk");
 var crypto = require("crypto");
 var sequelize = require("sequelize");
 var Op = sequelize.Op;
+var urlencode = require('urlencode');
+
 
 AWS.config.loadFromPath(path.join(__dirname, "../config/aws_config.json"));
 
@@ -251,39 +253,45 @@ router.post('/upload_receiver',function(req,res) {
    form.parse(req, function(err, fieldn, files){
        var s3 = new AWS.S3();
        console.log(files.userfile.name)
-       var hashinfo = crypto.createHash("sha512").update(files.userfile.name + files.userfile.size).digest('hex');
+       var hashinfo = crypto.createHash("sha512").update(files.userfile.name + new Date().getTime()).digest('hex');
+	   var s3Key = urlencode(hashinfo + files.userfile.name);
        var params = {
             Bucket:'cc-drop-box',
-            Key:hashinfo + files.userfile.name,
+            Key: s3Key,
             ACL:"public-read-write",
             Body: require('fs').createReadStream(files.userfile.path)
        }
        s3.upload(params, function(err, data){
             //var result='';
             console.log("AA");
-            var url = "https://cc-drop-box.s3.ap-northeast-2.amazonaws.com/"+ hashinfo +files.userfile.name;
             
             let temp = (req.session.directory).split("+");
             var parent_dir = temp[temp.length-1]
-            if(err)
-                result = 'Fail';
+            if(err) {
+	            result = 'Fail';
+	            res.redirect('/home/'+req.session.directory)
+            }
             else {
                 //result = `<img src="${data.Location}">`;
-                
-                console.log("upload: ",req.session.directory)
+                console.log("upload  data: ", data);
+                console.log("upload: ",req.session.directory);
                 models.file.create({
                   hash: hashinfo,
                   file_name : files.userfile.name,
-                  file_url: url,
+                  file_url: data.Location,
                   filetype: files.userfile.type,
                   filevolume: files.userfile.size,
                   root_user: req.session.user_id,
                   parent_dir: parent_dir,
                   directory: req.session.directory
+                }).then(function() {
+	                res.redirect('/home/'+req.session.directory)
+                }).catch(function(err) {
+                	console.error(err);
+	                res.redirect('/home/'+req.session.directory)
                 })
             }
             //res.send(`<html><body>${result}</body></html>`)
-            res.redirect('/home/'+req.session.directory)
               
        });
    });
