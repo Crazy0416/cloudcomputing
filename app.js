@@ -57,8 +57,5 @@ models.sequelize.sync().then( () => {
     console.log(err);
 });
 
-app.listen(80, function() {
-  console.log('connected')
-})
 
 module.exports = app;
