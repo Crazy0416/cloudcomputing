@@ -1,13 +1,15 @@
 const express = require('express');
 const models = require("../models");
+const path = require("path")
 var formidable = require('formidable');
+var multer = require("multer");
 const router = express.Router();
 var AWS = require("aws-sdk");
 var crypto = require("crypto");
 var sequelize = require("sequelize");
-var Op = sequelize.Op
+var Op = sequelize.Op;
 
-AWS.config.loadFromPath('./config/aws_config.json')
+AWS.config.loadFromPath(path.join(__dirname, "../config/aws_config.json"));
 
 /*로그인 후 메인화면*/
 router.get('/h', function(req,res,next) {
@@ -191,7 +193,7 @@ router.get('/home/imgshow/:filehash', function(req,res) {
 // 파일 삭제
 router.post('/delete_receiver/:key', function(req,res) {
   var params = {
-    Bucket:'dropbox-t',
+    Bucket:'cc-drop-box',
     Key:req.params.key,
   }
   var s3 = new AWS.S3();
@@ -229,7 +231,7 @@ router.post('/folder_delete_receiver/:key', function(req,res) {
       console.log("AAASDFASDFASDFSDF");
       console.log(result.hash)
       var params = {
-        Bucket:'dropbox-t',
+        Bucket:'cc-drop-box',
         Key:result.hash,
       }
       s3.deleteObject(params, function(err, data) {
@@ -244,22 +246,22 @@ router.post('/folder_delete_receiver/:key', function(req,res) {
 
 // 업로드
 router.post('/upload_receiver',function(req,res) {
-  
+
   var form = new formidable.IncomingForm();
    form.parse(req, function(err, fieldn, files){
        var s3 = new AWS.S3();
        console.log(files.userfile.name)
        var hashinfo = crypto.createHash("sha512").update(files.userfile.name + files.userfile.size).digest('hex');
        var params = {
-            Bucket:'dropbox-t',
-            Key:hashinfo,
+            Bucket:'cc-drop-box',
+            Key:hashinfo + files.userfile.name,
             ACL:"public-read-write",
             Body: require('fs').createReadStream(files.userfile.path)
        }
        s3.upload(params, function(err, data){
             //var result='';
             console.log("AA");
-            var url = "https://s3.amazonaws.com/dropbox-t/"+hashinfo
+            var url = "https://cc-drop-box.s3.ap-northeast-2.amazonaws.com/"+ hashinfo +files.userfile.name;
             
             let temp = (req.session.directory).split("+");
             var parent_dir = temp[temp.length-1]
