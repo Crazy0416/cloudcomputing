@@ -3,151 +3,171 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <meta charset="utf-8">
-  <script type="text/javascript" src="/jquery/lib/jquery.js"></script>
-  <script type='text/javascript' src='/jquery/lib/jquery.bgiframe.min.js'></script>
-  <script type='text/javascript' src='/jquery/lib/jquery.ajaxQueue.js'></script>
-  <script type='text/javascript' src='/jquery/jquery.autocomplete.js'></script>
-  <script src="/blockui/jquery.blockUI.js"></script>
-  <link rel="stylesheet" type="text/css" href="/jquery/jquery.autocomplete.css" />
-  <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta charset="utf-8">
+    <script type="text/javascript" src="/jquery/lib/jquery.js"></script>
+    <script type='text/javascript' src='/jquery/lib/jquery.bgiframe.min.js'></script>
+    <script type='text/javascript' src='/jquery/lib/jquery.ajaxQueue.js'></script>
+    <script type='text/javascript' src='/jquery/jquery.autocomplete.js'></script>
+    <script src="/blockUI/jquery.blockUI.js"></script>
+    <link rel="stylesheet" type="text/css" href="/jquery/jquery.autocomplete.css" />
+    <title><%= title %></title>
 
 
 
-  <!-- Bootstrap core CSS -->
-  <link href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
-  <link href="/css/simple-sidebar.css" type="text/css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/css/simple-sidebar.css" type="text/css" rel="stylesheet">
 
 
 </head>
 
 <body>
 
-  <div class="d-flex" id="wrapper">
+<div class="d-flex" id="wrapper">
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading"><%= title %> </div>
-      <div class="list-group list-group-flush">
-        <a href="<%="/home/" + session.user_id%>" class="list-group-item list-group-item-action bg-light">드라이브</a>
-      </div>
+        <div class="sidebar-heading"><%= title %> </div>
+        <div class="list-group list-group-flush">
+            <a href="<%="/home/" + session.user_id%>" class="list-group-item list-group-item-action bg-light">드라이브</a>
+        </div>
     </div>
     <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
 
-      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-primary" id="menu-toggle">Menu</button>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-primary" id="menu-toggle">Menu</button>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-              <a class="nav-link" >
-              <form action="/home" method="post">
-                <td><input type="text" name="Foldername"></td>
-                <input type="submit" class="btn btn-success" value="폴더 추가">
-              </form>
-              </a>
-              <a class="nav-link" >
-              <form enctype="multipart/form-data" method="post" action="/upload_receiver">
-                <input type="file" name="userfile">
-                <input type="submit" class="btn btn-success" name = "upload">
-            </form>
-          </a>
-            <a class="nav-link" >
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <a class="nav-link" >
+                        <form action="/home" method="post">
+                            <td><input type="text" name="Foldername"></td>
+                            <input type="submit" class="btn btn-success" value="폴더 추가">
+                        </form>
+                    </a>
+                    <a class="nav-link" >
+                        <form enctype="multipart/form-data" method="post" action="/upload_receiver">
+                            <input type="file" name="userfile">
+                            <input type="submit" class="btn btn-success" name = "upload">
+                        </form>
+                    </a>
+                    <a class="nav-link" >
 
-                <script>
-                    function doSomething() {
-                        var url = document.forms[0].elements['name'].value;
-                        console.log(url);
-                        window.location =  url;
-                        return false;
-                    }
+                        <script>
+							function doSomething() {
+								var url = document.forms[0].elements['name'].value;
+								console.log(url);
+								window.location =  url;
+								return false;
+							}
+                        </script>
+                        <form onsubmit="return doSomething();">
+                            <input type="text" id="searchbox" name="search_result">
+                            <input type="submit" id="sumit" class = "btn btn-info" value="검색">
+                        </form>
+                    </a>
+                    <script>
+						var temp = "<%=tags%>"
+						var availableTags = temp.split(',');
+						$(document).ready(function() {
+							$("#searchbox").autocomplete(availableTags, {
+								matchContains: true,
+								selectFirst: false
+							})
+						})
                     </script>
-            <form onsubmit="return doSomething();">
-                <input type="text" id="searchbox" name="search_result">
-                <input type="submit" id="sumit" class = "btn btn-info" value="검색">
-              </form>
-            </a>
-              <script>
-                var temp = "<%=tags%>"
-                var availableTags = temp.split(',');
-                $(document).ready(function() {
-                  $("#searchbox").autocomplete(availableTags, {
-                    matchContains: true,
-                    selectFirst: false
-                  })
-                })
-              </script>
 
-              <li class="nav-item active">
-                  <a class="nav-link" >로그인 유저 : <%= session.user_id %> </a>
-                </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <li class="nav-item active">
+                        <a class="nav-link" >로그인 유저 : <%= session.user_id %> </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/h">홈</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/logout">로그아웃</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </nav>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/h">홈</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout">로그아웃</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-      <div class="container-fluid">
-          <form action= <%="/home/" + session.user_id%> method = "GET">
+
+
+        <div class="container-fluid">
+            <form action= <%="/home/" + session.user_id%> method = "GET">
             <% if (parent_dir) {%>
-            <% if (parent_dir != session.user_id) {%>
-              <a href=<%= "/home/" + parent_path %> <pre>..</pre> </a>
-                  <pre> filetype : folder </pre>
-              <%} %>
-            </hr>
-          <%}%>
-              <% for(let folder of folders) {%>
-                <hr>
-                 <a href=<%= "/home/" + folder.directory %> <pre><%= folder.foldername %></pre> </a>
-                  <pre> filetype : folder </pre>
-              </hr>
+                <% if (parent_dir != session.user_id) {%>
+                    <a href=<%= "/home/" + parent_path %> <pre>..</pre> </a>
+                    <pre> filetype : folder </pre>
                 <%} %>
-              <% for(let post of posts) {%>
+                </hr>
+            <%}%>
+            <% for(let folder of folders) {%>
                 <hr>
-               <a href=<%=post.file_url%> <td><pre><%= post.file_name %></pre> </td></a>
+
+                <a href=<%= "/home/" + folder.directory %> <pre><%= folder.foldername %></pre> </a>
+                <pre> filetype : folder </pre>
+                <form action=<%="/folder_delete_receiver/" + folder.directory %> method="POST">
+                    <input type="submit" class = "btn btn-danger" value = "삭제">
+                </form>
+                </hr>
+            <%} %>
+            <% for(let post of posts) {%>
+                <hr>
+                <% if(post.filetype.indexOf("video") != -1) {%>
+                <a href=<%="/home/streaming/" + post.hash %> <td><pre><%= post.file_name %></pre></td></a>
+                <%} else if(post.filetype.indexOf("image") != -1) { %>
+                <a href=<%="/home/imgshow/" + post.hash %> <td><pre><%= post.file_name %></pre></td></a>
+                <%} else{%>
+                    <td><pre><%= post.file_name %></pre></td>
+                <%} %>
+
                 <pre> filetype : <%= post.filetype %></pre>
                 <pre> filesize : <%= post.filevolume %></pre>
-              </hr>
-              <%} %>
-          </form>
-      </div>
+                <form action=<%= post.file_url %> method="GET">
+                    <input type="submit" class = "btn btn-primary"  value = "다운로드">
+                </form>
+                <br>
+                <form action=<%="/delete_receiver/" + post.hash %> method="POST">
+                    <input type="submit" class = "btn btn-danger" value = "삭제">
+                </form>
+                </hr>
+            <%} %>
+            </form>
+        </div>
     </div>
     <!-- /#page-content-wrapper -->
 
-  </div>
-  <!-- /#wrapper -->
+</div>
+<!-- /#wrapper -->
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="/vendor/jquery/jquery.min.js"></script>
-  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Menu Toggle Script -->
-  <script>
-    $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-    });
-  </script>
+<!-- Menu Toggle Script -->
+<script>
+	$("#menu-toggle").click(function(e) {
+		e.preventDefault();
+		$("#wrapper").toggleClass("toggled");
+	});
+</script>
 
 </body>
 
