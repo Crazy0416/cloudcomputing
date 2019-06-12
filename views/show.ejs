@@ -56,12 +56,28 @@
         <% for(let folder of folders) {%>
           <hr>
            <a href=<%= "/home/" + folder.directory %> <pre><%= folder.foldername %></pre> </a>
+           
+            <form action=<%="/folder_delete_receiver/" + folder.directory %> method="POST">
+            <input type="submit" value = "삭제">
+            </form>
             <pre> filetype : folder </pre>
         </hr>
           <%} %>
         <% for(let post of posts) {%>
           <hr>
-         <a href=<%=post.file_url%> <td><pre><%= post.file_name %></pre> </td></a>
+          <% if(post.filetype.indexOf("video") != -1) {%>
+         <a href=<%="/home/streaming/" + post.hash %> <td><pre><%= post.file_name %></pre></td></a>
+          <%} else if(post.filetype.indexOf("image") != -1) { %>
+            <a href=<%="/home/imgshow/" + post.hash %> <td><pre><%= post.file_name %></pre></td></a>
+          <%} else{%>
+            <td><pre><%= post.file_name %></pre></td>
+          <%} %>
+          <form action=<%= post.file_url %> method="GET">
+           <input type="submit" value = "다운로드">
+         </form>
+         <form action=<%="/delete_receiver/" + post.hash %> method="POST">
+          <input type="submit" value = "삭제">
+        </form>
           <pre> filetype : <%= post.filetype %></pre>
           <pre> filesize : <%= post.filevolume %></pre>
         </hr>

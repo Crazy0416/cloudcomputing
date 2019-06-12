@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "root",
-    "password": "57436854",
+    "password": "cloudcomputing",
     "database": "drop_box_db",
-    "host": "drop-box-db.cmdcjgqrccqp.us-east-1.rds.amazonaws.com",
+    "host": "cloudcomputing.ckvjbzzadkkp.ap-northeast-2.rds.amazonaws.com",
     "dialect": "mysql",
     "pool": {
       "max":5,

@@ -80,8 +80,6 @@ router.post('/home',function(req,res,next) {
   res.redirect('/home/'+req.session.directory)
 })
 
-
-
 /* 폴더 access && 검색 결과*/
 router.get('/home/:directory',function(req,res,next) {
   if(!req.session.user_id) {
@@ -169,28 +167,99 @@ router.get('/home/:directory',function(req,res,next) {
   })
 }
 })
+/* 동영상 스트리밍 */
+router.get('/home/streaming/:filehash',function(req,res) {
+  if(!req.session.user_id) {
+    res.redirect("/login");
+  }
+  res.render("showfile", {
+    type : "Video",
+    hash : req.params.filehash
+  })
+})
+/* 이미지 파일 보기 */
+router.get('/home/imgshow/:filehash', function(req,res) {
+  if(!req.session.user_id) {
+    res.redirect("/login");
+  }
+  res.render("showfile", {
+    type : "Image",
+    hash : req.params.filehash
+  })
+})
 
+// 파일 삭제
+router.post('/delete_receiver/:key', function(req,res) {
+  var params = {
+    Bucket:'dropbox-t',
+    Key:req.params.key,
+  }
+  var s3 = new AWS.S3();
+  s3.deleteObject(params, function(err, data) {
+    if (err) console.log(err, err.stack);  // error
+    else     console.log();                 // deleted
+    models.file.destroy({
+      where: {
+        hash : req.params.key
+      }
+    })
+  })
+  res.redirect('/home/'+req.session.directory);
+})
+//폴더 삭제
+
+router.post('/folder_delete_receiver/:key', function(req,res) {
+  var s3 = new AWS.S3();
+  models.folder.destroy({
+    where: {
+      directory : req.params.key
+    }
+  })  
+  models.file.findAll({
+    where : {
+      directory : req.params.key
+    }
+  }).then(results => {
+    models.file.destroy ({
+      where: {
+        directory : req.params.key
+      }
+    })
+    for (let result of results) {
+      console.log("AAASDFASDFASDFSDF");
+      console.log(result.hash)
+      var params = {
+        Bucket:'dropbox-t',
+        Key:result.hash,
+      }
+      s3.deleteObject(params, function(err, data) {
+        if(err) console.log(err,err.stack);
+        else console.log();
+      })
+    }
+  })
+  res.redirect("/home/" + req.session.directory);
+})
+  
 
 // 업로드
 router.post('/upload_receiver',function(req,res) {
   
   var form = new formidable.IncomingForm();
-  console.log("AA");
    form.parse(req, function(err, fieldn, files){
        var s3 = new AWS.S3();
        console.log(files.userfile.name)
        var hashinfo = crypto.createHash("sha512").update(files.userfile.name + files.userfile.size).digest('hex');
        var params = {
-            Bucket:'drop-box-test',
+            Bucket:'dropbox-t',
             Key:hashinfo,
             ACL:"public-read-write",
             Body: require('fs').createReadStream(files.userfile.path)
        }
-       console.log("AA");
        s3.upload(params, function(err, data){
             //var result='';
             console.log("AA");
-            var url = "https://s3.amazonaws.com/drop-box-test/"+hashinfo
+            var url = "https://s3.amazonaws.com/dropbox-t/"+hashinfo
             
             let temp = (req.session.directory).split("+");
             var parent_dir = temp[temp.length-1]
